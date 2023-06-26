@@ -1,8 +1,8 @@
-export default function UserItem() {
+export default function UserItem({no, student}) {
     return (       
         <tr>
-            <td>1</td>
-            <td>email@gmail.com</td>
+            <td>{no}</td>
+            <td>{student.email}</td>
         </tr>
     )
 }

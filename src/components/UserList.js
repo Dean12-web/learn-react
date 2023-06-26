@@ -1,5 +1,6 @@
 import UserItem from "./UserItem"
-export default function UserList() {
+export default function UserList({ students }) {
+    //state is a local variable inside an function, prop is parameter that comes from outside
     return (
         <table className="table table-striped">
             <thead>
@@ -9,7 +10,11 @@ export default function UserList() {
                 </tr>
             </thead>
             <tbody>
-                <UserItem/>
+                { 
+                    students.map((student,index)=>(
+                        <UserItem key={index} student={student} no={index + 1} />
+                    ))
+                }
             </tbody>
         </table>
     )
