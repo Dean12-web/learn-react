@@ -10,7 +10,7 @@ export default function UserBox() {
     useEffect(() => {
         axios.get(`http://localhost:3001/users`).then((response) => {
             if (response.data.success)
-                setData(response.data.data.map(item => ({ ...item, sent: true })))
+                setData(response.data.data.users.map(item => ({ ...item, sent: true })))
         }).catch(()=>{
             setData([])
         })
@@ -53,6 +53,21 @@ export default function UserBox() {
     const removeStudent = (id) => {
         axios.delete(`http://localhost:3001/users/${id}`).then((response) => {
             setData(data.filter(item => item._id !== id))
+        }).catch(()=>{
+            alert('Hapus Gagal')
+        })
+    }
+
+    const updateStudent = (_id,email) =>{
+        axios.put(`http://localhost:3001/users/${_id}`, {email}).then((response) => {
+            setData(currentData => currentData.map(item => {
+                if (item._id === _id) {
+                    item.email = response.data.data.email
+                }
+                return item
+            }))
+        }).catch(()=>{
+            alert('Update Gagal')
         })
     }
     return (
@@ -63,7 +78,7 @@ export default function UserBox() {
             <div className="card-body">
                 <UserForm add={addStudent} />
             </div>
-            <UserList students={data} remove={removeStudent} resend ={resendStudent}/>
+            <UserList students={data} remove={removeStudent} resend ={resendStudent} update = {updateStudent}/>
             <div className="card-footer">
                 <h1 className="text-center">Ini Footer</h1>
             </div>
