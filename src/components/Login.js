@@ -1,12 +1,28 @@
-export default function login() {
-    const [student, setStudent] = useState({email: '', password: ''})
-    const auth = (emai, password) =>{
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import axios from "axios"
 
+export default function Login() {
+    const [student, setStudent] = useState({ email: '', password: '' })
+
+    const navigate = useNavigate()
+
+    const auth = ({ email, password }) => {
+        axios.post(`http://localhost:3001/users/auth`, { email, password }).then(({ data }) => {
+            if (data.success) {
+                localStorage.setItem("user", JSON.stringify(data.data))
+                navigate('/')
+            } else {
+                alert(data.data)
+            }
+        }).catch(() => {
+            alert('Errort Connectig To The Server')
+        })
     }
-    const submit = (event) =>{
+    const submit = (event) => {
         event.preventDefault()
         auth(student)
-        setStudent({email: '', password: ''})
+        setStudent({ email: '', password: '' })
     }
     return (
         <div className="card">
@@ -27,7 +43,7 @@ export default function login() {
                             <input type="password" className="form-control" id="password" name="password" value={student.password} onChange={event => setStudent({ ...student, password: event.target.value })} />
                         </div>
                     </div>
-                    <button type="submit" className="btn btn-primary">Save</button>
+                    <button type="submit" className="btn btn-primary">Login</button>
                 </form>
             </div>
         </div>
