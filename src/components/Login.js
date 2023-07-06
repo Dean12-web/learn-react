@@ -16,7 +16,7 @@ export default function Login() {
                 alert(data.data)
             }
         }).catch(() => {
-            alert('Errort Connectig To The Server')
+            alert('Errort Connecting To The Server')
         })
     }
     const submit = (event) => {
