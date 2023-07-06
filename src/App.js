@@ -50,11 +50,8 @@ function NotFound() {
 
 function App() {
   const [data, setData] = useState([])
-  const [page, setPage] = useState(1)
-  const [isLoading, setIsLoading] = useState(false)
-
   useEffect(() => {
-    axios.get(`http://localhost:3001/users?page=${page}`, {
+    axios.get(`http://localhost:3001/users`, {
       headers: {
         Authorization: `Bearer ${JSON.parse(localStorage.getItem("user"))?.token}`
       }
@@ -64,27 +61,8 @@ function App() {
     }).catch(() => {
       setData([])
     })
-  }, [page])
+  }, [])
 
-  const handleScroll = () => {
-    // Check if user has scrolled to the bottom of the page
-    if (
-      window.innerHeight + document.documentElement.scrollTop ===
-      document.documentElement.offsetHeight
-    ) {
-      setPage((prevPage) => prevPage + 1); // Load the next page
-    }
-  };
-
-  useEffect(() => {
-    // Attach scroll event listener when the component mounts
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      // Remove scroll event listener when the component unmounts
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   const addStudent = (email, password) => {
     const _id = Date.now().toString() //Temporary ID, For Safety U can Use UUID
