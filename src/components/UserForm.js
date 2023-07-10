@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { addStudent } from "../actions/users"
+import { useDispatch } from "react-redux"
 
-export default function UserForm({ add }) {
+export default function UserForm() {
     const navigate = useNavigate()
-
+    const dispatch = useDispatch()
     const [student, setStudent] = useState({ email: '', password: '' })
 
     useEffect(() => {
@@ -15,7 +17,7 @@ export default function UserForm({ add }) {
 
     const submit = (event) => {
         event.preventDefault()
-        add(student.email, student.password)
+        dispatch(addStudent(student.email, student.password))
         setStudent({ email: '', password: '' })
         navigate('/')
     }

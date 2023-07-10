@@ -2,8 +2,11 @@ import { BrowserRouter as Router, Routes, Route, Outlet, Link } from "react-rout
 import UserForm from "./components/UserForm";
 import Login from "./components/Login"
 import UserBox from "./components/UserBox";
-import { useEffect, useState } from 'react';
-import axios from "axios";
+import { useEffect } from 'react';
+
+import { useSelector, useDispatch } from "react-redux";
+
+import { loadStudent, resendStudent, removeStudent, updateStudent } from "./actions/users";
 
 function Layout() {
   const user = JSON.parse(localStorage.getItem('user'))
@@ -49,91 +52,23 @@ function NotFound() {
 }
 
 function App() {
-  const [data, setData] = useState([])
+  const students = useSelector((state) => state.users)
+  const dispatch = useDispatch()
   useEffect(() => {
-    axios.get(`http://localhost:3001/users`, {
-      headers: {
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem("user"))?.token}`
-      }
-    }).then((response) => {
-      if (response.data.success)
-        setData(response.data.data.users.map(item => ({ ...item, sent: true })))
-    }).catch(() => {
-      setData([])
-    })
-  }, [])
+    dispatch(loadStudent())
+  }, [dispatch])
 
-
-  const addStudent = (email, password) => {
-    const _id = Date.now().toString() //Temporary ID, For Safety U can Use UUID
-    setData([{ _id, email, password, sent: true }, ...data])
-    axios.post(`http://localhost:3001/users`, { email, password }, {
-      headers: {
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem("user"))?.token}`
-      }
-    }).then((response) => {
-      setData(currentData => currentData.map(item => {
-        if (item._id === _id) {
-          item._id = response.data.data._id
-        }
-        return item
-      }))
-
-    }).catch(() => {
-      setData(currentData => currentData.map(item => {
-        if (item._id === _id) {
-          item.sent = false
-        }
-        return item
-      }))
-    })
-  }
-
-  const resendStudent = ({ _id, email, password }) => {
-    axios.post(`http://localhost:3001/users`, { email, password }).then((response) => {
-      setData(currentData => currentData.map(item => {
-        if (item._id === _id) {
-          item._id = response.data.data._id
-          item.sent = true
-        }
-        return item
-      }))
-    }).catch(() => {
-
-    })
-  }
-
-  const removeStudent = (id) => {
-    axios.delete(`http://localhost:3001/users/${id}`).then((response) => {
-      setData(data.filter(item => item._id !== id))
-    }).catch(() => {
-      alert('Hapus Gagal')
-    })
-  }
-
-  const updateStudent = (_id, email) => {
-    axios.put(`http://localhost:3001/users/${_id}`, { email }).then((response) => {
-      setData(currentData => currentData.map(item => {
-        if (item._id === _id) {
-          item.email = response.data.data.email
-        }
-        return item
-      }))
-    }).catch(() => {
-      alert('Update Gagal')
-    })
-  }
   return (
     // Nested Router
     <Router>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<UserBox
-            data={data}
+            students={students}
             removeStudent={removeStudent}
             resendStudent={resendStudent}
             updateStudent={updateStudent} />} />
-          <Route path="add" element={<UserForm add={addStudent} />} />
+          <Route path="add" element={<UserForm />} />
           <Route path="login" element={<Login />} />
           <Route path="*" element={<NotFound />} />
         </Route>

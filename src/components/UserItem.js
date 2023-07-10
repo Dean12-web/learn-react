@@ -1,6 +1,9 @@
 import { useState } from "react"
+import { useDispatch } from "react-redux"
+import { removeStudent } from "../actions/users"
 
-export default function UserItem({ no, student, remove, resend, update }) {
+export default function UserItem({ no, student, resend, update }) {
+    const dispatch = useDispatch()
 
     const [isEdit, setIsEdit] = useState(false)
 
@@ -22,7 +25,7 @@ export default function UserItem({ no, student, remove, resend, update }) {
             ) : (
                 <td>
                     <button className="btn btn-success" type="button" onClick={() => setIsEdit(true)}>Edit</button>&nbsp;
-                    <button className="btn btn-danger" type="button" onClick={remove}>Delete</button>
+                    <button className="btn btn-danger" type="button" onClick={() => dispatch(removeStudent(student._id))}>Delete</button>
                 </td>
             ) : (
                 <td>
